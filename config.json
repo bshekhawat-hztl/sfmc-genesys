@@ -1,0 +1,37 @@
+{
+    "workflowApiVersion": "1.1",
+    "metaData": {
+      "icon": "https://example.com/icon.png",
+      "iconSmall": "https://example.com/icon-small.png",
+      "category": "message"
+    },
+    "type": "REST",
+    "lang": {
+      "en-US": {
+        "name": "Genesys WhatsApp Trigger",
+        "description": "Send WhatsApp message via Genesys API"
+      }
+    },
+    "arguments": {
+      "execute": {
+        "inArguments": [
+          { "to": "" },
+          { "message": "" }
+        ],
+        "outArguments": [],
+        "url": "https://<your-heroku-app-name>.herokuapp.com/execute",
+        "verb": "POST",
+        "body": "",
+        "header": "",
+        "format": "json",
+        "useJwt": false
+      }
+    },
+    "configurationArguments": {
+      "applicationExtensionKey": "genesys-whatsapp-trigger",
+      "save": { "url": "https://<your-heroku-app-name>.herokuapp.com/save" },
+      "publish": { "url": "https://<your-heroku-app-name>.herokuapp.com/publish" },
+      "validate": { "url": "https://<your-heroku-app-name>.herokuapp.com/validate" }
+    }
+  }
+  
