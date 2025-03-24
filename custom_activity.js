@@ -51,6 +51,11 @@ app.post("/execute", async (req, res) => {
     });
 
     const accessToken = authResponse.access_token;
+    
+    res.send(`SFMC Genesys Custom Activity server is running.<br><br>Auth Token: <br><code>${accessToken}</code>`);
+  } catch (err) {
+    res.send('SFMC Genesys Custom Activity server is running.<br><br>Could not retrieve auth token.');
+  }
 
     // 2. Send WhatsApp message trigger request
     const payload = {
