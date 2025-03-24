@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "custom_activity.js",
   "scripts": {
-    "start": "custom_activity.js"
+    "start": "node custom_activity.js"
   },
   "keywords": [],
   "author": "Bhupendra Singh",
