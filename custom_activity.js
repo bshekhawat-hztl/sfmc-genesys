@@ -1,4 +1,4 @@
-// server.js - Custom Activity Boilerplate for Genesys-SFMC integration
+// custom_activity.js - Custom Activity Boilerplate for Genesys-SFMC integration
 
 const express = require("express");
 const bodyParser = require("body-parser");
@@ -13,6 +13,11 @@ const GENESYS_AUTH_URL = "https://login.mec1.pure.cloud/oauth/token";
 const GENESYS_CLIENT_ID = "a36298ab-fed3-428c-9d1f-86e99c982b63";
 const GENESYS_CLIENT_SECRET = "tJL4zU-PQpV6BHI-owOChKzE5v8M9U0WkDRfbWcU0wY";
 const GENESYS_MSG_URL = "https://api.mec1.pure.cloud/api/v2/flows/executions";
+
+// Root route to confirm app is running
+app.get('/', (req, res) => {
+  res.send('SFMC Genesys Custom Activity server is running.');
+});
 
 // Serve config.json file
 app.get('/config.json', (req, res) => {
