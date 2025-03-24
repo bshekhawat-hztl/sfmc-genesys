@@ -19,7 +19,7 @@
           { "message": "" }
         ],
         "outArguments": [],
-        "url": "https://sfmc-genesys.herokuapp.com/execute",
+        "url": "https://sfmc-heroku-hztl.herokuapp.com/execute",
         "verb": "POST",
         "body": "",
         "header": "",
@@ -29,9 +29,9 @@
     },
     "configurationArguments": {
       "applicationExtensionKey": "genesys-whatsapp-trigger",
-      "save": { "url": "https://sfmc-genesys.herokuapp.com/save" },
-      "publish": { "url": "https://sfmc-genesys.herokuapp.com/publish" },
-      "validate": { "url": "https://sfmc-genesys.herokuapp.com/validate" }
+      "save": { "url": "https://sfmc-heroku-hztl.herokuapp.com/save" },
+      "publish": { "url": "https://sfmc-heroku-hztl.herokuapp.com/publish" },
+      "validate": { "url": "https://sfmc-heroku-hztl.herokuapp.com/validate" }
     }
   }
   
