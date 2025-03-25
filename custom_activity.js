@@ -92,7 +92,7 @@ app.post("/execute", async (req, res) => {
       return res.status(400).send("Missing required fields");
     }
 
-    const payload = { to, message };
+    const payload = { flowId: "770ea816-7ce7-4e44-ac49-b935fba7f268",to, message };
     console.log("Sending payload to Genesys:", payload);
 
     const response = await request.post({
