@@ -1,1 +1,1 @@
-web: node custom_activity.js
+web: npm start
