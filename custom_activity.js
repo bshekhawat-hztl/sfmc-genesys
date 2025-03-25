@@ -79,7 +79,7 @@ app.post("/validate", (req, res) => {
 });
 
 app.get("/activity", (req, res) => {
-  res.sendFile(path.join(__dirname, "index.html"));
+  res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
 // Execute activity endpoint
