@@ -1,58 +1,84 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <meta charset="UTF-8">
   <title>Genesys WhatsApp Trigger</title>
-  <script src="https://apps.contentassets.exacttarget.com/legacy/jbActivity.js"></script>
-</head>
-<body>
-  <h1>Genesys WhatsApp Trigger</h1>
-
-  <label for="phone">Phone Number:</label>
-  <input type="text" id="phone" placeholder="+971xxxxxxxxx"><br>
-
-  <label for="message">Message:</label>
-  <textarea id="message" placeholder="Type your message here"></textarea>
-
-  <script>
-    var payload = {};
-
-    // Called by Journey Builder when activity is initialized
-    function initialize(data) {
-      console.log('Activity initialized:', data);
-
-      if (data) {
-        payload = data;
-
-        // Pre-fill if config was already saved
-        const phone = data.arguments?.execute?.inArguments?.find(arg => arg.to)?.to || '';
-        const message = data.arguments?.execute?.inArguments?.find(arg => arg.message)?.message || '';
-
-        document.getElementById("phone").value = phone;
-        document.getElementById("message").value = message;
-      }
+  <script src="https://apps.sfmc-content.com/legacy/jbActivity.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
     }
 
-    // Called when user clicks "Done"
+    h2 {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      margin: 10px 0 5px;
+    }
+
+    input, textarea {
+      width: 100%;
+      padding: 10px;
+      font-size: 14px;
+      margin-bottom: 20px;
+    }
+  </style>
+</head>
+<body>
+  <h2>Genesys WhatsApp Trigger</h2>
+
+  <label for="phoneNumber">Phone Number</label>
+  <input type="text" id="phoneNumber" placeholder="+9715xxxxxxxx">
+
+  <label for="message">Message</label>
+  <textarea id="message" rows="4" placeholder="Enter WhatsApp message..."></textarea>
+
+  <script>
+    const connection = new Postmonger.Session();
+
+    connection.on('initActivity', initialize);
+    connection.on('clickedNext', save);
+    connection.on('clickedDone', save);
+
+    function initialize(data) {
+      console.log("Initializing activity with data:", data);
+
+      const inArgs = data?.arguments?.execute?.inArguments || [];
+
+      const to = inArgs.find(arg => arg.to)?.to || '';
+      const message = inArgs.find(arg => arg.message)?.message || '';
+
+      document.getElementById('phoneNumber').value = to;
+      document.getElementById('message').value = message;
+    }
+
     function save() {
-      const phone = document.getElementById("phone").value;
-      const message = document.getElementById("message").value;
+      const to = document.getElementById('phoneNumber').value;
+      const message = document.getElementById('message').value;
 
-      payload.arguments.execute.inArguments = [
-        { to: phone },
-        { message: message }
-      ];
-      payload.metaData.isConfigured = true;
+      const payload = {
+        arguments: {
+          execute: {
+            inArguments: [
+              { to },
+              { message }
+            ],
+            outArguments: []
+          }
+        },
+        metaData: {
+          isConfigured: true
+        }
+      };
 
-      console.log('Saving payload:', payload);
-      // Sends payload back to Journey Builder
+      console.log("Saving activity with payload:", payload);
       connection.trigger('updateActivity', payload);
     }
 
-    // Listen for Journey Builder events
-    connection.on('initActivity', initialize);
-    connection.on('requestedTokens', function() {});
-    connection.on('requestedEndpoints', function() {});
-    connection.on('clickedNext', save);
+    connection.trigger('ready');
   </script>
 </body>
 </html>
