@@ -3,9 +3,12 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const request = require("request-promise-native");
-const app = express();
+const cors = require("cors");
 const path = require("path");
 
+const app = express();
+
+app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
@@ -14,7 +17,7 @@ const GENESYS_CLIENT_ID = "a36298ab-fed3-428c-9d1f-86e99c982b63";
 const GENESYS_CLIENT_SECRET = "tJL4zU-PQpV6BHI-owOChKzE5v8M9U0WkDRfbWcU0wY";
 const GENESYS_MSG_URL = "https://api.mec1.pure.cloud/api/v2/flows/executions";
 
-// Root route to confirm app is running and show auth token
+// Root route to confirm app is running and show access token
 app.get("/", async (req, res) => {
   try {
     const authResponse = await request.post({
@@ -28,13 +31,16 @@ app.get("/", async (req, res) => {
     });
 
     const accessToken = authResponse.access_token;
-    res.send(
-      `SFMC Genesys Custom Activity server is running.<br><br>Auth Token:<br><code>${accessToken}</code>`
-    );
-  } catch (err) {
-    res.send(
-      "SFMC Genesys Custom Activity server is running.<br><br>Could not retrieve auth token."
-    );
+    console.log("Auth token generated: ", accessToken);
+
+    res.send(`
+      <h2>SFMC Genesys Custom Activity server is running.</h2>
+      <h3>Current Access Token:</h3>
+      <pre>${accessToken}</pre>
+    `);
+  } catch (error) {
+    console.error("Error generating auth token on root route:", error);
+    res.send("SFMC Genesys server is running but failed to generate token.");
   }
 });
 
@@ -43,23 +49,27 @@ app.get("/config.json", (req, res) => {
   res.sendFile(path.join(__dirname, "config.json"));
 });
 
-// Custom Activity UI Endpoints
-app.get("/activity", (req, res) => {
-  res.json({});
+// Custom Activity UI Endpoints (POST as required by SFMC Journey Builder)
+app.post("/save", (req, res) => {
+  console.log("Save request received");
+  res.status(200).json({ message: "Save successful" });
 });
 
-app.get("/save", (req, res) => {
-  res.json({});
+app.post("/publish", (req, res) => {
+  console.log("Publish request received");
+  res.status(200).json({ message: "Publish successful" });
 });
 
-app.get("/publish", (req, res) => {
-  res.json({});
+app.post("/validate", (req, res) => {
+  console.log("Validate request received");
+  res.status(200).json({ message: "Validation successful" });
 });
 
-// Execute endpoint to trigger WhatsApp message
+// Execute activity endpoint
 app.post("/execute", async (req, res) => {
   try {
-    // Get Auth Token from Genesys
+    console.log("Execute request received", req.body);
+
     const authResponse = await request.post({
       url: GENESYS_AUTH_URL,
       form: {
@@ -71,15 +81,14 @@ app.post("/execute", async (req, res) => {
     });
 
     const accessToken = authResponse.access_token;
+    console.log("Auth token for execution: ", accessToken);
 
-    // Prepare payload for WhatsApp trigger
     const payload = {
-      to: req.body.inArguments[0].to, // e.g., customer phone number
+      to: req.body.inArguments[0].to,
       message: req.body.inArguments[0].message,
     };
 
-    // Send WhatsApp message
-    await request.post({
+    const response = await request.post({
       url: GENESYS_MSG_URL,
       headers: {
         Authorization: `Bearer ${accessToken}`,
@@ -88,6 +97,7 @@ app.post("/execute", async (req, res) => {
       body: JSON.stringify(payload),
     });
 
+    console.log("Message successfully triggered to Genesys");
     res.status(200).send("Success");
   } catch (err) {
     console.error("Error executing activity:", err);
@@ -96,6 +106,4 @@ app.post("/execute", async (req, res) => {
 });
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () =>
-  console.log(`Server running on port ${PORT}`)
-);
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
