@@ -5,32 +5,41 @@
   <script src="https://apps.sfmc-content.com/legacy/jbActivity.js"></script>
 </head>
 <body>
-  <h2>Genesys WhatsApp Trigger</h2>
+  <h1>Genesys WhatsApp Trigger</h1>
+  <p>This is a placeholder for your custom activity UI.</p>
+
   <script>
-    // Initialize Activity
-    window.connection.trigger('ready');
+    // Initialize connection with Journey Builder
+    window.onload = function () {
+      if (window.jb && jb.activity) {
+        jb.activity.onLoad(function (data) {
+          console.log("Activity Loaded", data);
+        });
 
-    // Save Data
-    window.connection.on('requestPayload', function(payload) {
-      console.log('Request Payload:', payload);
-    });
+        jb.activity.onSave(function () {
+          var payload = {
+            metaData: {
+              isConfigured: true
+            },
+            arguments: {
+              execute: {
+                inArguments: [
+                  { to: "9715xxxxxxx" },
+                  { message: "Hello from Journey Builder!" },
+                  { sessionId: "abc123" },
+                  { responseId: "resp001" }
+                ],
+                outArguments: []
+              }
+            }
+          };
 
-    window.connection.on('clickedNext', function() {
-      const payload = {
-        metaData: {
-          isConfigured: true
-        },
-        arguments: {
-          execute: {
-            inArguments: [
-              { to: "{{Contact.Attribute.to}}" },
-              { message: "Hello from Genesys WhatsApp Trigger" }
-            ]
-          }
-        }
-      };
-      window.connection.trigger('updateActivity', payload);
-    });
+          jb.activity.setPayload(payload);
+        });
+      } else {
+        console.error("Journey Builder context not loaded");
+      }
+    };
   </script>
 </body>
 </html>
