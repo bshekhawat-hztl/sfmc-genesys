@@ -46,6 +46,7 @@ app.get("/", async (req, res) => {
 
 // Serve config.json file
 app.get("/config.json", (req, res) => {
+  res.setHeader('Content-Type', 'application/json');
   res.sendFile(path.join(__dirname, "config.json"));
 });
 
@@ -68,7 +69,7 @@ app.post("/validate", (req, res) => {
 // Execute activity endpoint
 app.post("/execute", async (req, res) => {
   try {
-    console.log("Execute request received", req.body);
+    console.log("Execute request body:", req.body);
 
     const authResponse = await request.post({
       url: GENESYS_AUTH_URL,
@@ -83,10 +84,16 @@ app.post("/execute", async (req, res) => {
     const accessToken = authResponse.access_token;
     console.log("Auth token for execution: ", accessToken);
 
-    const payload = {
-      to: req.body.inArguments[0].to,
-      message: req.body.inArguments[0].message,
-    };
+    const to = req.body.inArguments?.[0]?.to;
+    const message = req.body.inArguments?.[1]?.message;
+
+    if (!to || !message) {
+      console.error("Missing 'to' or 'message' in inArguments.");
+      return res.status(400).send("Missing required fields");
+    }
+
+    const payload = { to, message };
+    console.log("Sending payload to Genesys:", payload);
 
     const response = await request.post({
       url: GENESYS_MSG_URL,
@@ -97,10 +104,10 @@ app.post("/execute", async (req, res) => {
       body: JSON.stringify(payload),
     });
 
-    console.log("Message successfully triggered to Genesys");
+    console.log("Response from Genesys:", response);
     res.status(200).send("Success");
   } catch (err) {
-    console.error("Error executing activity:", err);
+    console.error("Error executing activity:", err.message || err);
     res.status(500).send("Failure");
   }
 });
