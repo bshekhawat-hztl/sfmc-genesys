@@ -1,89 +1,61 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="UTF-8" />
   <title>Genesys WhatsApp Trigger</title>
+  <meta charset="UTF-8" />
   <script src="https://apps.sfmc-content.com/legacy/jbActivity.js"></script>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      padding: 20px;
-    }
-    label {
-      display: block;
-      margin-top: 10px;
-      font-weight: bold;
-    }
-    input, textarea {
-      width: 100%;
-      padding: 8px;
-      margin-top: 5px;
-    }
-  </style>
 </head>
 <body>
   <h2>Genesys WhatsApp Trigger</h2>
-
-  <label for="to">Customer Phone Number:</label>
-  <input type="text" id="to" placeholder="+9715XXXXXXXX" />
-
-  <label for="message">WhatsApp Message:</label>
-  <textarea id="message" rows="4" placeholder="Enter message here"></textarea>
-
+  <label for="to">Phone Number:</label>
+  <input type="text" id="to" placeholder="+971XXXXXXXXX" />
+  <br /><br />
+  <label for="message">Message:</label>
+  <textarea id="message" placeholder="Enter your message"></textarea>
+  <br /><br />
   <script>
-    let payload = {};
-
-    // Called when Journey Builder requests the activity data
-    window.onload = function () {
-      window.addEventListener("message", function (event) {
-        const message = event.data;
-        if (message && message.method === "initActivity") {
-          payload = message.payload || {};
-
-          const to = payload.arguments?.execute?.inArguments?.find(x => x.to)?.to || "";
-          const messageText = payload.arguments?.execute?.inArguments?.find(x => x.message)?.message || "";
-
-          document.getElementById("to").value = to;
-          document.getElementById("message").value = messageText;
+    (function () {
+      const connection = new CustomEvent("ready", {
+        detail: {
+          name: "Genesys WhatsApp Trigger"
         }
       });
 
-      // Tell Journey Builder we’re ready
-      window.parent.postMessage({ method: "ready" }, "*");
-    };
+      window.dispatchEvent(connection);
 
-    // Called when Journey Builder clicks “Done” to save activity
-    function saveActivity() {
-      const to = document.getElementById("to").value;
-      const message = document.getElementById("message").value;
+      window.addEventListener("initActivity", function (event) {
+        const data = event.detail;
+        const inArgs = data?.inArguments || [];
+        document.getElementById("to").value = inArgs.find(arg => arg.to)?.to || "";
+        document.getElementById("message").value = inArgs.find(arg => arg.message)?.message || "";
+      });
 
-      const inArguments = [
-        { to },
-        { message }
-      ];
+      window.addEventListener("clickedNext", function () {
+        const to = document.getElementById("to").value;
+        const message = document.getElementById("message").value;
 
-      const activityPayload = {
-        metaData: payload.metaData,
-        arguments: {
-          execute: {
-            inArguments: inArguments,
-            outArguments: [],
-          },
-        },
-      };
+        if (!to || !message) {
+          alert("Please provide both phone number and message.");
+          return;
+        }
 
-      window.parent.postMessage({
-        method: "save",
-        payload: activityPayload,
-      }, "*");
-    }
-
-    // Listen for save call
-    window.addEventListener("message", function (event) {
-      if (event.data?.method === "requestPayload") {
-        saveActivity();
-      }
-    });
+        window.parent.postMessage(
+          JSON.stringify({
+            action: "updateActivity",
+            arguments: {
+              execute: {
+                inArguments: [
+                  { to },
+                  { message }
+                ],
+                outArguments: []
+              }
+            }
+          }),
+          "*"
+        );
+      });
+    })();
   </script>
 </body>
 </html>
