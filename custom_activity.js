@@ -78,6 +78,10 @@ app.post("/validate", (req, res) => {
   res.status(200).json({ message: "Validation successful" });
 });
 
+app.get("/activity", (req, res) => {
+  res.sendFile(path.join(__dirname, "index.html"));
+});
+
 // Execute activity endpoint
 app.post("/execute", async (req, res) => {
   try {
