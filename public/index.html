@@ -43,7 +43,7 @@
     connection.on('clickedNext', save);
     connection.on('clickedDone', save);
 
-    function initialize(data) {
+   function initialize(data) {
       console.log("Initializing activity with data:", data);
 
       const inArgs = data?.arguments?.execute?.inArguments || [];
@@ -53,7 +53,8 @@
 
       document.getElementById('phoneNumber').value = to;
       document.getElementById('message').value = message;
-    }
+    } 
+
 
     function save() {
       const to = document.getElementById('phoneNumber').value;
