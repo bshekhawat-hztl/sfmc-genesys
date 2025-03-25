@@ -32,9 +32,10 @@
       "applicationExtensionKey": "genesys-whatsapp-trigger",
       "save": { "url": "https://sfmc-heroku-hztl-deeed7a2782e.herokuapp.com/save" },
       "publish": { "url": "https://sfmc-heroku-hztl-deeed7a2782e.herokuapp.com/publish" },
-      "validate": { "url": "https://sfmc-heroku-hztl-deeed7a2782e.herokuapp.com/validate" }
+      "validate": { "url": "https://sfmc-heroku-hztl-deeed7a2782e.herokuapp.com/validate" },
+      "activity": { "url": "https://sfmc-heroku-hztl-deeed7a2782e.herokuapp.com/activity" }
     },
-    
+
     "userInterfaces": {
     "configModal": {
       "url": "https://sfmc-heroku-hztl-deeed7a2782e.herokuapp.com/index.html"
