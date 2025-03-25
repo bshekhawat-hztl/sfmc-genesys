@@ -2,60 +2,57 @@
 <html>
 <head>
   <title>Genesys WhatsApp Trigger</title>
-  <meta charset="UTF-8" />
-  <script src="https://apps.sfmc-content.com/legacy/jbActivity.js"></script>
+  <script src="https://apps.contentassets.exacttarget.com/legacy/jbActivity.js"></script>
 </head>
 <body>
-  <h2>Genesys WhatsApp Trigger</h2>
-  <label for="to">Phone Number:</label>
-  <input type="text" id="to" placeholder="+971XXXXXXXXX" />
-  <br /><br />
+  <h1>Genesys WhatsApp Trigger</h1>
+
+  <label for="phone">Phone Number:</label>
+  <input type="text" id="phone" placeholder="+971xxxxxxxxx"><br>
+
   <label for="message">Message:</label>
-  <textarea id="message" placeholder="Enter your message"></textarea>
-  <br /><br />
+  <textarea id="message" placeholder="Type your message here"></textarea>
+
   <script>
-    (function () {
-      const connection = new CustomEvent("ready", {
-        detail: {
-          name: "Genesys WhatsApp Trigger"
-        }
-      });
+    var payload = {};
 
-      window.dispatchEvent(connection);
+    // Called by Journey Builder when activity is initialized
+    function initialize(data) {
+      console.log('Activity initialized:', data);
 
-      window.addEventListener("initActivity", function (event) {
-        const data = event.detail;
-        const inArgs = data?.inArguments || [];
-        document.getElementById("to").value = inArgs.find(arg => arg.to)?.to || "";
-        document.getElementById("message").value = inArgs.find(arg => arg.message)?.message || "";
-      });
+      if (data) {
+        payload = data;
 
-      window.addEventListener("clickedNext", function () {
-        const to = document.getElementById("to").value;
-        const message = document.getElementById("message").value;
+        // Pre-fill if config was already saved
+        const phone = data.arguments?.execute?.inArguments?.find(arg => arg.to)?.to || '';
+        const message = data.arguments?.execute?.inArguments?.find(arg => arg.message)?.message || '';
 
-        if (!to || !message) {
-          alert("Please provide both phone number and message.");
-          return;
-        }
+        document.getElementById("phone").value = phone;
+        document.getElementById("message").value = message;
+      }
+    }
 
-        window.parent.postMessage(
-          JSON.stringify({
-            action: "updateActivity",
-            arguments: {
-              execute: {
-                inArguments: [
-                  { to },
-                  { message }
-                ],
-                outArguments: []
-              }
-            }
-          }),
-          "*"
-        );
-      });
-    })();
+    // Called when user clicks "Done"
+    function save() {
+      const phone = document.getElementById("phone").value;
+      const message = document.getElementById("message").value;
+
+      payload.arguments.execute.inArguments = [
+        { to: phone },
+        { message: message }
+      ];
+      payload.metaData.isConfigured = true;
+
+      console.log('Saving payload:', payload);
+      // Sends payload back to Journey Builder
+      connection.trigger('updateActivity', payload);
+    }
+
+    // Listen for Journey Builder events
+    connection.on('initActivity', initialize);
+    connection.on('requestedTokens', function() {});
+    connection.on('requestedEndpoints', function() {});
+    connection.on('clickedNext', save);
   </script>
 </body>
 </html>
