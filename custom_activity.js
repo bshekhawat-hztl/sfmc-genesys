@@ -21,6 +21,9 @@ app.use((req, res, next) => {
   next();
 });
 
+// Serve static files (like index.html)
+app.use(express.static(path.join(__dirname, 'public')));
+
 const GENESYS_AUTH_URL = "https://login.mec1.pure.cloud/oauth/token";
 const GENESYS_CLIENT_ID = "a36298ab-fed3-428c-9d1f-86e99c982b63";
 const GENESYS_CLIENT_SECRET = "tJL4zU-PQpV6BHI-owOChKzE5v8M9U0WkDRfbWcU0wY";

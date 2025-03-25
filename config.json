@@ -33,6 +33,14 @@
       "save": { "url": "https://sfmc-heroku-hztl-deeed7a2782e.herokuapp.com/save" },
       "publish": { "url": "https://sfmc-heroku-hztl-deeed7a2782e.herokuapp.com/publish" },
       "validate": { "url": "https://sfmc-heroku-hztl-deeed7a2782e.herokuapp.com/validate" }
+    },
+    
+    "userInterfaces": {
+    "configModal": {
+      "url": "https://sfmc-heroku-hztl-deeed7a2782e.herokuapp.com/index.html"
     }
+  },
+  "schema": {}
+
   }
   

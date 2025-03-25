@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Genesys WhatsApp Trigger</title>
+  <script src="https://apps.sfmc-content.com/legacy/jbActivity.js"></script>
+</head>
+<body>
+  <h2>Genesys WhatsApp Trigger</h2>
+  <script>
+    // Initialize Activity
+    window.connection.trigger('ready');
+
+    // Save Data
+    window.connection.on('requestPayload', function(payload) {
+      console.log('Request Payload:', payload);
+    });
+
+    window.connection.on('clickedNext', function() {
+      const payload = {
+        metaData: {
+          isConfigured: true
+        },
+        arguments: {
+          execute: {
+            inArguments: [
+              { to: "{{Contact.Attribute.to}}" },
+              { message: "Hello from Genesys WhatsApp Trigger" }
+            ]
+          }
+        }
+      };
+      window.connection.trigger('updateActivity', payload);
+    });
+  </script>
+</body>
+</html>
