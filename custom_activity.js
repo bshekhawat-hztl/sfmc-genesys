@@ -84,16 +84,29 @@ app.post("/execute", async (req, res) => {
     const accessToken = authResponse.access_token;
     console.log("Auth token for execution: ", accessToken);
 
-    const to = req.body.inArguments?.[0]?.to;
-    const message = req.body.inArguments?.[1]?.message;
+    const inArgs = req.body.inArguments || [];
 
-    if (!to || !message) {
-      console.error("Missing 'to' or 'message' in inArguments.");
-      return res.status(400).send("Missing required fields");
-    }
+    const payload = {
+      flowId: "770ea816-7ce7-4e44-ac49-b935fba7f268", // replace with correct flow ID
+      inputData: {
+        "Flow.responseId": inArgs.find(arg => arg.responseId)?.responseId || "default-response-id",
+        "Flow.customerPhone": inArgs.find(arg => arg.to)?.to,
+        "Flow.integrationId": "hardcoded-integration-id", // replace as needed
+        "Flow.sessionId": inArgs.find(arg => arg.sessionId)?.sessionId || "sessionid",
+        "Flow.key1": "key1",
+        "Flow.value1": "value1",
+        "Flow.key2": "key2",
+        "Flow.value2": "value2",
+        "Flow.key3": "key3",
+        "Flow.value3": "value3",
+        "Flow.key4": "key4",
+        "Flow.value4": "value4",
+        "Flow.key5": "key5",
+        "Flow.value5": "value5"
+      }
+    };
 
-    const payload = { flowId: "770ea816-7ce7-4e44-ac49-b935fba7f268",to, message };
-    console.log("Sending payload to Genesys:", payload);
+    console.log("Final payload to Genesys:", JSON.stringify(payload, null, 2));
 
     const response = await request.post({
       url: GENESYS_MSG_URL,

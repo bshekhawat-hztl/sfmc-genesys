@@ -15,9 +15,10 @@
     "arguments": {
       "execute": {
         "inArguments": [
-          { "to": "" },
-          { "message": "" }
-        ],
+            { "to": "" },
+            { "responseId": "" },
+            { "sessionId": "" }
+          ],
         "outArguments": [],
         "url": "https://sfmc-heroku-hztl-deeed7a2782e.herokuapp.com/execute",
         "verb": "POST",
